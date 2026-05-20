@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AI Agent Platform</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="sidebar">
+  <h2>Sessions</h2>
+  <button id="new-session-btn" onclick="createSession()">+ New Session</button>
+  <div id="session-list"></div>
+</div>
+
+<div id="main">
+  <div id="no-session">
+    <span>🤖</span>
+    <span>Create a session to get started</span>
+  </div>
+
+  <div id="session-view">
+    <div id="vnc-panel">
+      <div id="vnc-placeholder">Waiting for desktop environment to start...</div>
+      <iframe id="vnc-frame"></iframe>
+    </div>
+    <div id="chat-panel">
+      <div id="messages"></div>
+      <div id="input-area">
+        <input id="msg-input"
+               placeholder="Send a task to the agent..."
+               onkeydown="if(event.key==='Enter') sendMessage()" />
+        <button id="send-btn" onclick="sendMessage()">Send</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,40 @@
+# backend + postgres only
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:15-alpine        # alpine = smallest postgres image
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: agent
+      POSTGRES_PASSWORD: agentpass
+      POSTGRES_DB: agentdb
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    # memory limit so postgres doesn't eat t2.micro RAM
+    mem_limit: 256m
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql+asyncpg://agent:agentpass@postgres:5432/agentdb
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+      AGENT_IMAGE: agent-session:latest   # the image to spawn per session
+      # tells docker-py to use the host docker daemon
+      DOCKER_HOST: unix:///var/run/docker.sock
+    volumes:
+      # mount host docker socket so backend can spawn sibling containers
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+    mem_limit: 256m
+
+volumes:
+  pgdata:
