@@ -69,10 +69,6 @@ open frontend/index.html
 | DELETE | `/sessions/{id}` | Stop session |
 | WS | `/ws/{id}` | Real-time event stream |
 
-## Demo Video
-
-[Link to demo video]
-
 ## Concurrent Sessions
 
 Each session spawns an isolated Docker container with:
