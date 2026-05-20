@@ -15,24 +15,6 @@ Claude API (computer-use)
 ↓
 PostgreSQL (session + message persistence)
 
-## Sequence Diagram
-User          Frontend        Backend         Container        Claude API
-|                |               |                |                |
-|--New Session-->|               |                |                |
-|                |--POST /sessions-->             |                |
-|                |               |--spawn container->             |
-|                |               |<--container_id--|                |
-|                |<--session_id--|                |                |
-|                |               |                |                |
-|--Send task---->|               |                |                |
-|                |--POST /message--->             |                |
-|                |               |--POST /task--->|                |
-|                |               |                |--sampling_loop->|
-|                |               |                |<--stream events-|
-|                |               |<--POST /stream--|               |
-|                |<--WebSocket push--|             |                |
-|<--Live output--|               |                |                |
-
 ## Stack
 
 - **Backend:** Python, FastAPI, WebSockets, SQLAlchemy, asyncpg
