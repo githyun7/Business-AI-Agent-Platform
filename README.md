@@ -1,4 +1,4 @@
-# AI Agent Platform
+# Business AI Agent Platform
 
 A scalable backend system for managing Claude computer-use agent sessions.
 Each session runs in an isolated Docker container with its own virtual
