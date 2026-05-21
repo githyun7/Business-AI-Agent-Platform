@@ -5,31 +5,39 @@ let ws = null;
 
 // Session management
 
-async function createSession() {
+async function createSession() 
+{
   const btn = document.getElementById('new-session-btn');
   btn.textContent = 'Starting...';
   btn.disabled = true;
 
-  try {
+  try 
+  {
     const res = await fetch(`${API}/sessions`, { method: 'POST' });
     const data = await res.json();
     await loadSessions();
     selectSession(data.session_id);
-  } catch (e) {
+  } 
+  catch (e) 
+  {
     addMessage('system', `Failed to create session: ${e.message}`);
-  } finally {
+  } 
+  finally 
+  {
     btn.textContent = '+ New Session';
     btn.disabled = false;
   }
 }
 
-async function loadSessions() {
+async function loadSessions() 
+{
   const res = await fetch(`${API}/sessions`);
   const sessions = await res.json();
   const list = document.getElementById('session-list');
   list.innerHTML = '';
 
-  for (const s of sessions) {
+  for (const s of sessions) 
+  {
     const div = document.createElement('div');
     div.className = `session-item ${s.session_id === currentSessionId ? 'active' : ''}`;
     div.onclick = () => selectSession(s.session_id);
@@ -41,7 +49,8 @@ async function loadSessions() {
   }
 }
 
-async function selectSession(sessionId) {
+async function selectSession(sessionId) 
+{
   currentSessionId = sessionId;
 
   document.getElementById('no-session').style.display = 'none';
@@ -57,15 +66,19 @@ async function selectSession(sessionId) {
   const res = await fetch(`${API}/sessions/${sessionId}`);
   const session = await res.json();
 
-  if (session.status === 'ready') {
+  if (session.status === 'ready') 
+  {
     showVnc(session.vnc_url);
     setInputEnabled(true);
-  } else if (session.status === 'starting') {
+  } 
+  else if (session.status === 'starting') 
+  {
     addMessage('system', 'Container starting — waiting for desktop...');
   }
 }
 
-function connectWebSocket(sessionId) {
+function connectWebSocket(sessionId) 
+{
   if (ws) ws.close();
   ws = new WebSocket(`ws://localhost:8000/ws/${sessionId}`);
 
@@ -81,16 +94,19 @@ function connectWebSocket(sessionId) {
   };
 }
 
-function handleEvent(data) {
+function handleEvent(data) 
+{
   switch (data.type) {
     case 'session_ready':
     case 'session_status':
-      if (data.status === 'ready') {
+      if (data.status === 'ready') 
+      {
         showVnc(data.vnc_url);
         setInputEnabled(true);
         addMessage('system', '✅ Agent ready');
         loadSessions();
-      } else if (data.status === 'error') {
+      } 
+      else if (data.status === 'error') {
         addMessage('system', '❌ Session failed to start');
         loadSessions();
       }
@@ -98,9 +114,12 @@ function handleEvent(data) {
 
     case 'output':
       const block = data.block;
-      if (block?.type === 'text' && block.text) {
+      if (block?.type === 'text' && block.text) 
+      {
         addMessage('assistant', block.text);
-      } else if (block?.type === 'tool_use') {
+      } 
+      else if (block?.type === 'tool_use') 
+      {
         addMessage('tool', `🔧 ${block.name}\n${JSON.stringify(block.input, null, 2)}`);
       }
       break;
@@ -116,9 +135,10 @@ function handleEvent(data) {
   }
 }
 
-// ── Message sending ───────────────────────────────────────────────────────────
+// Message sending 
 
-async function sendMessage() {
+async function sendMessage() 
+{
   const input = document.getElementById('msg-input');
   const text = input.value.trim();
   if (!text || !currentSessionId) return;
@@ -127,32 +147,38 @@ async function sendMessage() {
   addMessage('user', text);
   setInputEnabled(false);
 
-  try {
+  try 
+  {
     await fetch(`${API}/sessions/${currentSessionId}/message`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ message: text }),
     });
     setTimeout(() => setInputEnabled(true), 2000);
-  } catch (e) {
+  } 
+  catch (e) 
+  {
     addMessage('system', `Failed to send: ${e.message}`);
     setInputEnabled(true);
   }
 }
 
-// ── UI helpers ────────────────────────────────────────────────────────────────
+// UI helpers 
 
-function showVnc(url) {
+function showVnc(url) 
+{
   const frame = document.getElementById('vnc-frame');
   const placeholder = document.getElementById('vnc-placeholder');
-  if (url) {
+  if (url) 
+  {
     frame.src = url;
     frame.style.display = 'block';
     placeholder.style.display = 'none';
   }
 }
 
-function addMessage(type, text) {
+function addMessage(type, text) 
+{
   const container = document.getElementById('messages');
   const div = document.createElement('div');
   div.className = `msg msg-${type}`;
@@ -161,7 +187,8 @@ function addMessage(type, text) {
   container.scrollTop = container.scrollHeight;
 }
 
-function setInputEnabled(enabled) {
+function setInputEnabled(enabled) 
+{
   document.getElementById('msg-input').disabled = !enabled;
   document.getElementById('send-btn').disabled = !enabled;
 }
